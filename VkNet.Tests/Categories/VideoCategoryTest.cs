@@ -85,7 +85,7 @@
              result[0].OwnerId.ShouldEqual(1);
              result[0].Title.ShouldEqual("Лидия Аркадьевна");
              result[0].Duration.ShouldEqual(131);
-             result[0].Date.ShouldEqual(new DateTime(2013, 11, 19, 17, 20, 55));
+             result[0].Date.ShouldEqual(new DateTime(2013, 11, 19, 13, 20, 55, DateTimeKind.Utc).ToLocalTime());
              result[0].ViewsCount.ShouldEqual(81676);
              result[0].CommentsCount.ShouldEqual(2098);
              result[0].Photo130.ShouldEqual(new Uri("http://cs419529.vk.me/u9258277/video/s_af2727af.jpg"));
@@ -97,7 +97,7 @@
              result[1].Title.ShouldEqual("Лидия Аркадьевна");
              result[1].Duration.ShouldEqual(62);
              result[1].Description.ShouldEqual(string.Empty);
-             result[1].Date.ShouldEqual(new DateTime(2013, 11, 18, 0, 51, 23));
+             result[1].Date.ShouldEqual(new DateTime(2013, 11, 17, 20, 51, 23, DateTimeKind.Utc).ToLocalTime());
              result[1].ViewsCount.ShouldEqual(42107);
              result[1].CommentsCount.ShouldEqual(1243);
              result[1].Photo130.ShouldEqual(new Uri("http://cs409217.vk.me/u9258277/video/s_4e281f24.jpg"));
@@ -109,7 +109,7 @@
              result[2].Title.ShouldEqual("This is SPARTA");
              result[2].Duration.ShouldEqual(16);
              result[2].Description.ShouldEqual(string.Empty);
-             result[2].Date.ShouldEqual(new DateTime(2013, 4, 21, 1, 57, 55));
+             result[2].Date.ShouldEqual(new DateTime(2013, 4, 20, 21, 57, 55, DateTimeKind.Utc).ToLocalTime());
              result[2].ViewsCount.ShouldEqual(218658);
              result[2].CommentsCount.ShouldEqual(2578);
              result[2].Photo130.ShouldEqual(new Uri("http://cs12761.vk.me/u5705167/video/s_df53315c.jpg"));
@@ -199,7 +199,7 @@
              result[0].OwnerId.ShouldEqual(1);
              result[0].Title.ShouldEqual("Лидия Аркадьевна");
              result[0].Duration.ShouldEqual(131);
-             result[0].Date.ShouldEqual(new DateTime(2013, 11, 19, 17, 20, 55));
+             result[0].Date.ShouldEqual(new DateTime(2013, 11, 19, 13, 20, 55, DateTimeKind.Utc).ToLocalTime());
              result[0].ViewsCount.ShouldEqual(81677);
              result[0].CommentsCount.ShouldEqual(2098);
              result[0].Photo130.ShouldEqual(new Uri("http://cs419529.vk.me/u9258277/video/s_af2727af.jpg"));
@@ -217,7 +217,7 @@
              result[1].Title.ShouldEqual("Лидия Аркадьевна");
              result[1].Duration.ShouldEqual(62);
              result[1].Description.ShouldEqual(string.Empty);
-             result[1].Date.ShouldEqual(new DateTime(2013, 11, 18, 0, 51, 23));
+             result[1].Date.ShouldEqual(new DateTime(2013, 11, 17, 20, 51, 23, DateTimeKind.Utc).ToLocalTime());
              result[1].ViewsCount.ShouldEqual(42107);
              result[1].CommentsCount.ShouldEqual(1243);
              result[1].Photo130.ShouldEqual(new Uri("http://cs409217.vk.me/u9258277/video/s_4e281f24.jpg"));
@@ -236,7 +236,7 @@
              result[2].Title.ShouldEqual("This is SPARTA");
              result[2].Duration.ShouldEqual(16);
              result[2].Description.ShouldEqual(string.Empty);
-             result[2].Date.ShouldEqual(new DateTime(2013, 4, 21, 1, 57, 55));
+             result[2].Date.ShouldEqual(new DateTime(2013, 4, 20, 21, 57, 55, DateTimeKind.Utc).ToLocalTime());
              result[2].ViewsCount.ShouldEqual(218659);
              result[2].CommentsCount.ShouldEqual(2578);
              result[2].Photo130.ShouldEqual(new Uri("http://cs12761.vk.me/u5705167/video/s_df53315c.jpg"));
@@ -451,7 +451,7 @@
 
              comments[0].Id.ShouldEqual(14715);
              comments[0].FromId.ShouldEqual(24758120);
-             comments[0].Date.ShouldEqual(new DateTime(2013, 11, 19, 17, 22, 41));
+             comments[0].Date.ShouldEqual(new DateTime(2013, 11, 19, 13, 22, 41, DateTimeKind.Utc).ToLocalTime());
              comments[0].Text.ShouldEqual("паша здаров!");
              comments[0].Likes.Count.ShouldEqual(5);
              comments[0].Likes.UserLikes.ShouldEqual(false);
@@ -459,7 +459,7 @@
 
              comments[1].Id.ShouldEqual(14716);
              comments[1].FromId.ShouldEqual(94278436);
-             comments[1].Date.ShouldEqual(new DateTime(2013, 11, 19, 17, 22, 52));
+             comments[1].Date.ShouldEqual(new DateTime(2013, 11, 19, 13, 22, 52, DateTimeKind.Utc).ToLocalTime());
              comments[1].Text.ShouldEqual("Я опять на странице Дурова, опять передаю привет Маме, Бабушке и своим друзьям! Дела у меня очень отлично!");
              comments[1].Likes.Count.ShouldEqual(77);
              comments[1].Likes.UserLikes.ShouldEqual(false);
@@ -499,12 +499,12 @@
 
              comments[0].Id.ShouldEqual(14715);
              comments[0].FromId.ShouldEqual(24758120);
-             comments[0].Date.ShouldEqual(new DateTime(2013, 11, 19, 17, 22, 41));
+			comments[0].Date.ShouldEqual(new DateTime(2013, 11, 19, 13, 22, 41, DateTimeKind.Utc).ToLocalTime());
              comments[0].Text.ShouldEqual("паша здаров!");
              
              comments[1].Id.ShouldEqual(14716);
              comments[1].FromId.ShouldEqual(94278436);
-             comments[1].Date.ShouldEqual(new DateTime(2013, 11, 19, 17, 22, 52));
+			comments[1].Date.ShouldEqual(new DateTime(2013, 11, 19, 13, 22, 52, DateTimeKind.Utc).ToLocalTime());
              comments[1].Text.ShouldEqual("Я опять на странице Дурова, опять передаю привет Маме, Бабушке и своим друзьям! Дела у меня очень отлично!");
          }
 
@@ -572,7 +572,7 @@
             result[0].Title.ShouldEqual("Fucking Machines Sasha Grey | Саша Грей | Саша Грэй  | Порно | Секс | Эротика | Секс машина |  Садо-мазо  | БДСМ");
             result[0].Duration.ShouldEqual(1934);
             result[0].Description.ShouldEqual("beauty 18+\n\n\'Качественное и эксклюзивное порно  у нас\'\n\n>>>>>>> http://vk.com/mastofmastur<<<<<<");
-            result[0].Date.ShouldEqual(new DateTime(2013, 11, 17, 20, 49, 22));
+            result[0].Date.ShouldEqual(new DateTime(2013, 11, 17, 16, 49, 22, DateTimeKind.Utc).ToLocalTime());
             result[0].ViewsCount.ShouldEqual(11579);
             result[0].CommentsCount.ShouldEqual(12);
             result[0].Photo130.ShouldEqual(new Uri("http://cs505118.vk.me/u7160710/video/s_08382000.jpg"));
@@ -585,7 +585,7 @@
             result[1].Title.ShouldEqual("домашнее частное порно порно модель саша грей on-line любовь порно с сюжетом лесби порка стендап stand up клип группа");
             result[1].Duration.ShouldEqual(1139);
             result[1].Description.ShouldEqual("секс знакомства подписывайся,знакомься,общайся,тут русские шлюхи,проститутки подпишись у нас http://vk.com/tyt_sex");
-            result[1].Date.ShouldEqual(new DateTime(2013, 6, 20, 8, 30, 18));
+			result[1].Date.ShouldEqual(new DateTime(2013, 6, 20, 4, 30, 18, DateTimeKind.Utc).ToLocalTime());
             result[1].ViewsCount.ShouldEqual(12817);
             result[1].CommentsCount.ShouldEqual(5);
             result[1].Photo130.ShouldEqual(new Uri("http://cs527502.vk.me/u65226705/video/s_1d867e81.jpg"));
@@ -597,7 +597,7 @@
             result[2].Title.ShouldEqual("Саша Грей | Sasha Grey #13");
             result[2].Duration.ShouldEqual(1289);
             result[2].Description.ShouldEqual("Взято со страницы Саша Грей | Sasha Grey | 18+: http://vk.com/sashagreyphotos\nЭротика: http://vk.com/gentleerotica");
-            result[2].Date.ShouldEqual(new DateTime(2013, 12, 13, 23, 6, 8));
+			result[2].Date.ShouldEqual(new DateTime(2013, 12, 13, 19, 6, 8, DateTimeKind.Utc).ToLocalTime());
             result[2].ViewsCount.ShouldEqual(8730);
             result[2].CommentsCount.ShouldEqual(12);
             result[2].Photo130.ShouldEqual(new Uri("http://cs535107.vk.me/u146564541/video/s_2d874147.jpg"));

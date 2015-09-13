@@ -229,7 +229,7 @@
         [Test]
         public void Get_Mutliple_TwoUidsDefaultFields_TwoProfiles()
         {
-            const string url = "https://api.vk.com/method/users.get?user_ids=1,672&v=5.9&access_token=token";
+            const string url = "https://api.vk.com/method/users.get?user_ids=1,672&v=5.21&access_token=token";
             const string json =
                 @"{
                     'response': [
@@ -264,7 +264,7 @@
         [Test]
         public void Get_TwoUidsEducationField_TwoProfiles()
         {
-            const string url = "https://api.vk.com/method/users.get?fields=education&user_ids=1,5041431&v=5.9&access_token=token";
+			const string url = "https://api.vk.com/method/users.get?fields=education&user_ids=1,5041431&v=5.21&access_token=token";
             const string json =
                 @"{
                     'response': [
@@ -540,7 +540,7 @@
         [Test]
         public void Get_ListOfUsers()
         {
-            const string url = "https://api.vk.com/method/users.get?fields=uid,first_name,last_name,sex,bdate,city,country,photo_50,photo_100,photo_200,photo_200_orig,photo_400_orig,photo_max,photo_max_orig,online,lists,domain,has_mobile,contacts,connections,site,education,universities,schools,can_post,can_see_all_posts,can_see_audio,can_write_private_message,status,last_seen,common_count,relation,relatives,counters,nickname,timezone&name_case=gen&user_ids=1&v=5.9&access_token=token";
+			const string url = "https://api.vk.com/method/users.get?fields=uid,first_name,last_name,sex,bdate,city,country,photo_50,photo_100,photo_200,photo_200_orig,photo_400_orig,photo_max,photo_max_orig,online,lists,domain,has_mobile,contacts,connections,site,education,universities,schools,can_post,can_see_all_posts,can_see_audio,can_write_private_message,status,last_seen,common_count,relation,relatives,counters,nickname,timezone&name_case=gen&user_ids=1&v=5.21&access_token=token";
             const string json =
             @"{
                     'response': [
@@ -1171,7 +1171,7 @@
             result[0].HomePhone.ShouldEqual(string.Empty);
             result[0].Site.ShouldEqual(string.Empty);
             result[0].Status.ShouldEqual("Пусть ветер гудит в проводах пусть будет осенняя влага пусть люди забудут о нас,но ни забудем друг друга.");
-            result[0].LastSeen.ShouldEqual(new DateTime(2014, 2, 18, 12, 2, 19));
+            result[0].LastSeen.ShouldEqual(new DateTime(2014, 2, 18, 8, 2, 19, DateTimeKind.Utc).ToLocalTime());
             result[0].CommonCount.ShouldEqual(0);
             result[0].Universities.Count.ShouldEqual(0);
             result[0].Relation.ShouldEqual(RelationType.InActiveSearch);
@@ -1205,7 +1205,7 @@
             result[1].Connections.Skype.ShouldEqual("немає");
             result[1].Site.ShouldEqual(string.Empty);
             result[1].Status.ShouldEqual("Не варто ображатися на людей за те, що вони не виправдали наших очікувань... ми самі винні, що чекали від них більше, ніж варто було!");
-            result[1].LastSeen.ShouldEqual(new DateTime(2014, 2, 18, 12, 1, 14));
+            result[1].LastSeen.ShouldEqual(new DateTime(2014, 2, 18, 8, 1, 14, DateTimeKind.Utc).ToLocalTime());
             result[1].CommonCount.ShouldEqual(0);
             result[1].Universities.Count.ShouldEqual(0);
             result[1].Relation.ShouldEqual(RelationType.Unknown);

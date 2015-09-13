@@ -7,6 +7,7 @@
     using System.Collections.Generic;
     using System.Diagnostics;
     using System.Text;
+    using System.Threading;
     using Newtonsoft.Json.Linq;
 
     using Categories;
@@ -14,6 +15,11 @@
     using Utils;
     using Enums.Filters;
 
+    /// <summary>
+    /// Служит для оповещения об истечении токена
+    /// </summary>
+    /// <param name="api">Экземпляр API у которого истекло время токена</param>
+    public delegate void VkApiDelegate(VkApi api);
     /// <summary>
     /// API для работы с ВКонтакте. Выступает в качестве фабрики для различных категорий API (например, для работы с пользователями, 
     /// группами и т.п.).
@@ -27,6 +33,7 @@
         internal KeyValuePair<string, string>? _credentials;
         internal int _appId;
         internal Settings _settings;
+        private Timer _expireTimer;
 
         /// <summary>
         /// Время вызова последнего метода этим объектом
@@ -63,11 +70,7 @@
             }
         }
 
-        /// <summary>
-        /// Позволяет обновлять токен автоматически при возникновении ошибки если есть возможность.
-        /// Нужно дописать реализацию, пока только поле
-        /// </summary>
-        private bool AutoTokenRefresh { get; set; }
+        public event VkApiDelegate OnTokenExpires;
 
         #region Categories Definition
         
@@ -143,7 +146,7 @@
 
         /// <summary>
         /// Идентификатор пользователя, от имени которого была проведена авторизация.
-        /// Если авторизация не была произведена с использованием метода <see cref="Authorize(int,string,string,Settings)"/>, 
+        /// Если авторизация не была произведена с использованием метода <see cref="Authorize(int,string,string,Settings,long?,string)"/>, 
         /// то возвращается null.
         /// </summary>
         public long? UserId { get; set; }
@@ -172,27 +175,27 @@
             Likes = new LikesCategory(this);
 			
             RequestsPerSecond = 3;
-            AutoTokenRefresh = false;
         }
 
         /// <summary>
         /// Authorize application on vk.com and getting Access Token.
         /// </summary>
         /// <param name="appId">Appliation Id</param>
-        /// <param name="email">Email or Phone</param>
+        /// <param name="emailOrPhone">Email or Phone</param>
         /// <param name="password">Password</param>
-        /// <param name="captcha_sid">Идентикикатор капчи</param>
-        /// <param name="captcha_key">Текст капчи</param>
+        /// <param name="code">Делегат получения кода для двухфакторной авторизации</param>
+        /// <param name="captchaSid">Идентикикатор капчи</param>
+        /// <param name="captchaKey">Текст капчи</param>
         /// <param name="settings">Access rights requested by your application</param>
-        public void Authorize(int appId, string email, string password, Settings settings, long? captcha_sid = null, string captcha_key = null)
+        public void Authorize(int appId, string emailOrPhone, string password, Settings settings, Func<string> code = null, long? captchaSid = null, string captchaKey = null)
         {
-            _credentials = new KeyValuePair<string, string>(email, password);
+            _authorize(appId, emailOrPhone, password, settings, code, captchaSid, captchaKey);
+
+            _credentials = new KeyValuePair<string, string>(emailOrPhone, password);
             _appId = appId;
             _settings = settings;
-
-            _authorize(appId, email, password, settings, captcha_sid, captcha_key);
         }
-
+        
         /// <summary>
         /// Выполняет авторизацию с помощью маркера доступа (access token), полученного извне.
         /// </summary>
@@ -200,6 +203,8 @@
         /// <param name="userId">Идентификатор пользователя, установившего приложение (необязательный параметр).</param>
         public void Authorize(string accessToken, long ?userId = null)
         {
+            _stopTimer();
+
             AccessToken = accessToken;
             UserId = userId;
             _credentials = null;
@@ -208,26 +213,50 @@
         /// <summary>
         /// Получает новый AccessToken использую логин, пароль, приложение и настройки указанные при последней авторизации.
         /// </summary>
-        public void RefreshToken()
+        public void RefreshToken(Func<string> code = null)
         {
             if (_credentials.HasValue)
-                _authorize(_appId, _credentials.Value.Key, _credentials.Value.Value, _settings);
+                _authorize(_appId, _credentials.Value.Key, _credentials.Value.Value, _settings, code);
             else
                 throw new AggregateException("Невозможно обновить токен доступа т.к. последняя авторизация происходила не при помощи логина и пароля");
         }
 
         #region Private & Internal Methods
 
-        internal void _authorize(int appId, string email, string password, Settings settings, long? captcha_sid = null, string captcha_key = null)
+        internal void _authorize(int appId, string email, string password, Settings settings, Func<string> code, long? captchaSid = null, string captchaKey = null)
         {
-            var authorization = Browser.Authorize(appId, email, password, settings, captcha_sid, captcha_key);
+            var authorization = Browser.Authorize(appId, email, password, settings, code, captchaSid, captchaKey);
             if (!authorization.IsAuthorized)
                 throw new VkApiAuthorizationException(InvalidAuthorization, email, password);
 
+            _stopTimer();
+
+            int expireTime = Convert.ToInt32(authorization.ExpiresIn) - 10000;
+            if (expireTime > 0)
+            {
+                _expireTimer = new Timer(_alertExpires, null, expireTime, Timeout.Infinite);
+            }
+            
             AccessToken = authorization.AccessToken;
             UserId = authorization.UserId;
         }
-
+        /// <summary>
+        /// Прекращает работу таймера оповещения
+        /// </summary>
+        private void _stopTimer()
+        {
+            if (_expireTimer != null)
+                _expireTimer.Dispose();
+        }
+        /// <summary>
+        /// Создает событие оповещения об окончании времени токена
+        /// </summary>
+        /// <param name="state"></param>
+        private void _alertExpires(object state)
+        {
+            if (OnTokenExpires != null)
+                OnTokenExpires(this);
+        }
 #if false
         // todo refactor this shit
         internal async Task<VkResponse> CallAsync(string methodName, VkParameters parameters, bool skipAuthorization = false)
@@ -302,9 +331,7 @@
             // проверка на не более 3-х запросов в секунду
             TimeSpan span;
             if (LastInvokeTime.HasValue && (span = LastInvokeTimeSpan.Value).TotalMilliseconds < _minInterval)
-            {
-                System.Threading.Thread.Sleep(_minInterval - (int)span.TotalMilliseconds);
-            }
+                Thread.Sleep(_minInterval - (int)span.TotalMilliseconds);
 
             string url = GetApiUrl(methodName, parameters);
             
